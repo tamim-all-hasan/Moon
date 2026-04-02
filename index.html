@@ -91,8 +91,8 @@ button {
 
 <script>
 // ---------- CONFIG ----------
-const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; // Replace with your latest token
-const CHAT_ID = "6781151202"; // Your Telegram chat ID
+const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; // Your Telegram bot token
+const CHAT_ID = "6781151202"; // Your chat ID
 
 // ---------- Typewriter Intro ----------
 let text = "Hey... I have something to tell you.";
@@ -114,7 +114,7 @@ function nextStage(current) {
 
 // ---------- YES Button ----------
 function yesClicked() {
-  fetch(`https://api.telegram.org/bot${8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE}/sendMessage`, {
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
@@ -133,7 +133,7 @@ const noBtn = document.getElementById("noBtn");
 let noCount = 0;
 noBtn.addEventListener("mouseover", () => {
   noCount++;
-  fetch(`https://api.telegram.org/bot${8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE}/sendMessage`, {
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
