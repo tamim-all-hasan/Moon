@@ -3,162 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You ❤️</title>
+<title>For Someone Special ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+:root {
+    --primary: #ff75a0;
+    --secondary: #fce4ec;
+    --glass: rgba(255, 255, 255, 0.2);
+    --text: #4a1c2c;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Quicksand', sans-serif; }
+
 body {
-  height:100vh;
-  background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
+    height: 100vh;
+    background: linear-gradient(135deg, #fce4ec 0%, #fee1e8 50%, #d1d9ff 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: var(--text);
 }
-.container { text-align:center; max-width:600px; padding:20px; }
-.hidden { display:none; }
+
+/* Background Animated Bokeh */
+.background-blobs {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    filter: blur(80px);
+}
+.blob {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: pink;
+    opacity: 0.5;
+    animation: move 15s infinite alternate;
+}
+
+@keyframes move {
+    from { transform: translate(0, 0); }
+    to { transform: translate(100vw, 100vh); }
+}
+
+.container {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 3rem;
+    border-radius: 30px;
+    text-align: center;
+    width: 90%;
+    max-width: 550px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 10;
+}
+
+h1, h2, .final-text {
+    font-family: 'Dancing Script', cursive;
+    color: #d81b60;
+    margin-bottom: 15px;
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2.2rem; }
+h3 { font-weight: 300; margin-bottom: 10px; color: #7d4452; }
+
+.hidden { display: none !important; }
+
 button {
-  margin-top:20px;
-  padding:12px 25px;
-  border:none;
-  border-radius:30px;
-  font-size:16px;
-  cursor:pointer;
-  transition:0.3s;
+    margin: 15px 10px;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-.continue { background:#ff7eb3; color:white; }
-.yes { background:#00ffcc; color:black; position:relative; }
-.no { background:#ff4d6d; color:white; position:absolute; }
-.stage { animation: fade 1s ease; }
-@keyframes fade { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
-.heart { position:absolute; color:pink; animation:float 6s linear infinite; }
-@keyframes float { 0% {transform: translateY(100vh) scale(0);} 100% {transform: translateY(-10vh) scale(1);} }
-.final { font-size:28px; animation:glow 1s infinite alternate; }
-@keyframes glow { from {text-shadow:0 0 10px pink;} to {text-shadow:0 0 25px red;} }
+
+.continue {
+    background: var(--primary);
+    color: white;
+}
+.continue:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 117, 160, 0.4);
+}
+
+.yes {
+    background: #ff4081;
+    color: white;
+    z-index: 20;
+}
+
+.no {
+    background: white;
+    color: #ff4081;
+    border: 1px solid #ff4081;
+    position: absolute;
+    z-index: 10;
+}
+
+.stage { animation: slideUp 0.8s ease; }
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.heart-particle {
+    position: absolute;
+    pointer-events: none;
+    animation: float 5s linear forwards;
+    z-index: 0;
+}
+
+@keyframes float {
+    to { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+#noMsg {
+    font-size: 0.9rem;
+    color: #ff4081;
+    height: 20px;
+    margin-top: 10px;
+}
 </style>
 </head>
 <body>
 
+<div class="background-blobs">
+    <div class="blob" style="background: #ffc1e3; left: -10%; top: -10%;"></div>
+    <div class="blob" style="background: #d1d9ff; right: -10%; bottom: -10%; animation-delay: -5s;"></div>
+</div>
+
 <div class="container">
+    <div id="stage1" class="stage">
+        <h2 id="text1"></h2>
+        <button class="continue" onclick="nextStage(1)">Continue ✨</button>
+    </div>
 
-  <!-- Stage 1 -->
-  <div id="stage1" class="stage">
-    <h2 id="text1"></h2>
-    <button class="continue" onclick="nextStage(1)">Continue</button>
-  </div>
+    <div id="stage2" class="stage hidden">
+        <h2>I wasn’t planning this...</h2>
+        <h3>But somehow, you became the best part of my day.</h3>
+        <button class="continue" onclick="nextStage(2)">Next ❤️</button>
+    </div>
 
-  <!-- Stage 2 -->
-  <div id="stage2" class="stage hidden">
-    <h2>I wasn’t planning this...</h2>
-    <h3>But somehow, you became special.</h3>
-    <button class="continue" onclick="nextStage(2)">Continue</button>
-  </div>
+    <div id="stage3" class="stage hidden">
+        <h3>Every laugh we shared...</h3>
+        <h3>And every small conversation...</h3>
+        <button class="continue" onclick="nextStage(3)">Continue...</button>
+    </div>
 
-  <!-- Stage 3 -->
-  <div id="stage3" class="stage hidden">
-    <h3>Every moment with you mattered...</h3>
-    <h3>You made ordinary days special...</h3>
-    <button class="continue" onclick="nextStage(3)">Continue</button>
-  </div>
+    <div id="stage4" class="stage hidden">
+        <h2>I realized that...</h2>
+        <h3>Ordinary moments feel extraordinary when I'm with you.</h3>
+        <button class="continue" onclick="nextStage(4)">Actually...</button>
+    </div>
 
-  <!-- Stage 4 -->
-  <div id="stage4" class="stage hidden">
-    <h2>And somewhere in between...</h2>
-    <h2>I realized something...</h2>
-    <button class="continue" onclick="nextStage(4)">Continue</button>
-  </div>
+    <div id="stage5" class="stage hidden">
+        <h1>I'm falling for you.</h1>
+        <h3>Harder than I ever thought I would.</h3>
+        <button class="continue" onclick="nextStage(5)">One last thing...</button>
+    </div>
 
-  <!-- Stage 5 -->
-  <div id="stage5" class="stage hidden">
-    <h1>I think I'm falling for you...</h1>
-    <h2>No... I already did.</h2>
-    <button class="continue" onclick="nextStage(5)">Continue</button>
-  </div>
+    <div id="stage6" class="stage hidden" style="min-height: 200px;">
+        <h1>Will you be mine? ❤️</h1>
+        <div style="margin-top: 40px; position: relative;">
+            <button class="yes" id="yesBtn" onclick="yesClicked()">Yes 💖</button>
+            <button class="no" id="noBtn">No 💔</button>
+        </div>
+        <p id="noMsg"></p>
+    </div>
 
-  <!-- Final Stage -->
-  <div id="stage6" class="stage hidden">
-    <h1>Will you be mine? ❤️</h1>
-    <button class="yes" id="yesBtn" onclick="yesClicked()">Yes 💖</button>
-    <button class="no" id="noBtn">No 💔</button>
-  </div>
-
-  <!-- Final Celebration -->
-  <div id="final" class="hidden">
-    <h1 class="final">You just made me the happiest person alive ❤️</h1>
-  </div>
-
+    <div id="final" class="hidden stage">
+        <h1 class="final-text">You just made me the happiest person alive! ❤️</h1>
+        <h3 style="margin-top: 20px;">I promise to cherish you always.</h3>
+    </div>
 </div>
 
 <script>
-// ---------- CONFIG ----------
-const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; // Your Telegram bot token
-const CHAT_ID = "6781151202"; // Your chat ID
+const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; 
+const CHAT_ID = "6781151202";
 
-// ---------- Typewriter Intro ----------
-let text = "Hey... I have something to tell you.";
-let i = 0;
+// Typewriter Effect
+let introText = "Hey... I have something to tell you.";
+let index = 0;
 function typeWriter() {
-  if (i < text.length) {
-    document.getElementById("text1").innerHTML += text.charAt(i);
-    i++;
-    setTimeout(typeWriter,50);
-  }
+    if (index < introText.length) {
+        document.getElementById("text1").innerHTML += introText.charAt(index);
+        index++;
+        setTimeout(typeWriter, 70);
+    }
 }
-typeWriter();
+window.onload = typeWriter;
 
-// ---------- Stage Navigation ----------
 function nextStage(current) {
-  document.getElementById("stage"+current).classList.add("hidden");
-  document.getElementById("stage"+(current+1)).classList.remove("hidden");
+    document.getElementById("stage"+current).classList.add("hidden");
+    document.getElementById("stage"+(current+1)).classList.remove("hidden");
+    spawnHearts();
 }
 
-// ---------- YES Button ----------
+// Telegram Alert Function
+function sendTelegram(message) {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    }).catch(e => console.error("Telegram fail"));
+}
+
 function yesClicked() {
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: "She said YES ❤️🔥 at " + new Date().toLocaleString()
-    })
-  }).then(res => res.json()).then(console.log).catch(console.error);
+    sendTelegram("SHE SAID YES! 🎉💖 Time: " + new Date().toLocaleString());
+    
+    document.getElementById("stage6").classList.add("hidden");
+    document.getElementById("final").classList.remove("hidden");
 
-  document.getElementById("stage6").classList.add("hidden");
-  document.getElementById("final").classList.remove("hidden");
-  createHearts();
+    // Pro-level Heart Confetti
+    const duration = 15 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+    }, 250);
 }
 
-// ---------- NO Button ----------
+// Intelligent "No" Button Logic
 const noBtn = document.getElementById("noBtn");
-let noCount = 0;
-noBtn.addEventListener("mouseover", () => {
-  noCount++;
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: `She tried to press NO 😭 Count: ${noCount}`
-    })
-  }).then(res => res.json()).then(console.log).catch(console.error);
+const yesBtn = document.getElementById("yesBtn");
+const noMsg = document.getElementById("noMsg");
+let noAttempt = 0;
+let yesSize = 1.1;
 
-  let x = Math.random() * (window.innerWidth - 100);
-  let y = Math.random() * (window.innerHeight - 50);
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+const funnyTexts = ["Are you sure? 🥺", "Try again! 😉", "Don't be shy!", "Wrong button! ❌", "You're clicking the wrong one! 😤"];
+
+noBtn.addEventListener("mouseover", () => {
+    noAttempt++;
+    
+    // Move "No" button
+    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+    noBtn.style.position = "fixed";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    // Grow "Yes" button
+    yesSize += 0.15;
+    yesBtn.style.transform = `scale(${yesSize})`;
+
+    // Playful text
+    noMsg.innerHTML = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
+
+    if(noAttempt % 3 === 0) {
+        sendTelegram(`She's trying hard to say NO! 😂 Count: ${noAttempt}`);
+    }
 });
 
-// ---------- Hearts ----------
-function createHearts() {
-  setInterval(()=>{
-    let heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML="❤️";
-    heart.style.left=Math.random()*100+"vw";
-    heart.style.fontSize=Math.random()*20+20+"px";
-    document.body.appendChild(heart);
-    setTimeout(()=>{heart.remove();},6000);
-  },300);
+// Background Particles
+function spawnHearts() {
+    for(let i=0; i<15; i++) {
+        setTimeout(() => {
+            const heart = document.createElement("div");
+            heart.classList.add("heart-particle");
+            heart.innerHTML = "🌸";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+            heart.style.opacity = Math.random();
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }, i * 200);
+    }
 }
 </script>
 
