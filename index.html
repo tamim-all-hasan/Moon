@@ -26,6 +26,7 @@ body {
     color: var(--text);
 }
 
+/* Background Blobs */
 .background-blobs {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -58,6 +59,7 @@ body {
     max-width: 500px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     z-index: 10;
+    transition: all 0.5s ease;
 }
 
 h1, h2 {
@@ -77,7 +79,7 @@ button {
     border-radius: 50px;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease-out;
 }
 
 .continue {
@@ -93,12 +95,13 @@ button {
     z-index: 100;
 }
 
+/* No button hidden na, just position change hobe */
 .no {
     background: white;
     color: #ff4081;
     border: 1.5px solid #ff4081;
     position: absolute;
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 99;
 }
 
 .stage { animation: fadeIn 0.8s ease; }
@@ -122,31 +125,18 @@ button {
     </div>
 
     <div id="stage2" class="stage hidden">
-        <h2>I wasn’t planning this...</h2>
-        <h3>But you became very special to me.</h3>
+        <h2>You are very special to me...</h2>
         <button class="continue" onclick="nextStage(2)">Next ❤️</button>
     </div>
 
     <div id="stage3" class="stage hidden">
-        <h3>Every moment with you...</h3>
-        <h3>Makes me smile a little more.</h3>
-        <button class="continue" onclick="nextStage(3)">Continue...</button>
-    </div>
-
-    <div id="stage4" class="stage hidden">
-        <h2>And I realized...</h2>
-        <h3>I don't want to lose this feeling.</h3>
-        <button class="continue" onclick="nextStage(4)">Actually...</button>
-    </div>
-
-    <div id="stage5" class="stage hidden">
         <h1>I'm falling for you.</h1>
-        <button class="continue" onclick="nextStage(5)">One last thing...</button>
+        <button class="continue" onclick="nextStage(3)">One last thing...</button>
     </div>
 
-    <div id="stage6" class="stage hidden" style="height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <h1>Will you be mine? ❤️</h1>
-        <div style="margin-top: 30px; width: 100%; position: relative; height: 100px;">
+    <div id="stage4" class="stage hidden" style="min-height: 200px;">
+        <h1 id="proposalHeader">Will you be mine? ❤️</h1>
+        <div id="buttonGroup" style="margin-top: 40px; position: relative; height: 100px; display: flex; justify-content: center; align-items: center; gap: 20px;">
             <button class="yes" id="yesBtn" onclick="yesClicked()">Yes 💖</button>
             <button class="no" id="noBtn">No 💔</button>
         </div>
@@ -161,7 +151,7 @@ button {
 const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; 
 const CHAT_ID = "6781151202";
 
-// Typewriter
+// Intro text
 let introText = "Hey... I have something to tell you.";
 let idx = 0;
 function typeWriter() {
@@ -186,16 +176,19 @@ function sendTelegram(msg) {
     }).catch(e => {});
 }
 
+// "YES" Clicked - Shob gayeb hobe and celebration ashbe
 function yesClicked() {
     sendTelegram("SHE SAID YES! 🎉💖");
-    document.getElementById("stage6").classList.add("hidden");
+    
+    // Header and Buttons shob shoriye fela
+    document.getElementById("stage4").classList.add("hidden");
     document.getElementById("final").classList.remove("hidden");
 
-    // Confetti
+    // Confetti explosion
     var end = Date.now() + (10 * 1000);
     (function frame() {
-        confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ff75a0'] });
-        confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4081', '#ff75a0'] });
+        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ff75a0'] });
+        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4081', '#ff75a0'] });
         if (Date.now() < end) requestAnimationFrame(frame);
     }());
 }
@@ -205,35 +198,42 @@ const yesBtn = document.getElementById("yesBtn");
 let noCount = 0;
 let lastNotifyTime = 0;
 
-noBtn.addEventListener("mouseover", moveNoButton);
-noBtn.addEventListener("touchstart", moveNoButton); // Mobile support
-
-function moveNoButton(e) {
+// "NO" button logic - Just moves away, never disappears until YES is clicked
+function moveNoButton() {
     noCount++;
     
-    // Position logic: Stay within screen bounds but move away from mouse
-    const padding = 50;
+    // Screen dimensions theke chotto padding
+    const padding = 60;
     const maxX = window.innerWidth - noBtn.offsetWidth - padding;
     const maxY = window.innerHeight - noBtn.offsetHeight - padding;
     
+    // Random position within safe zone
     const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
     const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
 
+    // Smooth transition maintain kore position change
     noBtn.style.position = "fixed";
     noBtn.style.left = randomX + "px";
     noBtn.style.top = randomY + "px";
 
-    // Yes button subtly grows
-    let currentScale = 1 + (noCount * 0.08);
-    if(currentScale < 3) yesBtn.style.transform = `scale(${currentScale})`;
+    // "Yes" button size increase (optional touch)
+    let currentScale = 1 + (noCount * 0.1);
+    if(currentScale < 3.5) yesBtn.style.transform = `scale(${currentScale})`;
 
-    // Telegram notification with 2s cooldown to avoid spamming too fast
+    // Telegram update
     const now = Date.now();
-    if (now - lastNotifyTime > 2000) {
-        sendTelegram(`She tried to click No! 😭 (Total attempts: ${noCount})`);
+    if (now - lastNotifyTime > 1500) {
+        sendTelegram(`No button dodge count: ${noCount} 😭`);
         lastNotifyTime = now;
     }
 }
+
+noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevents accidental click on mobile
+    moveNoButton();
+});
+
 </script>
 
 </body>
