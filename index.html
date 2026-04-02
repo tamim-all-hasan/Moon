@@ -5,35 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For You ❤️</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
 body {
-  height: 100vh;
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  height:100vh;
+  background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
 }
-.container { text-align: center; max-width: 600px; padding: 20px; }
-.hidden { display: none; }
+.container { text-align:center; max-width:600px; padding:20px; }
+.hidden { display:none; }
 button {
-  margin-top: 20px;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 30px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:30px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
 }
-.continue { background: #ff7eb3; color: white; }
-.yes { background: #00ffcc; color: black; position: relative; }
-.no { background: #ff4d6d; color: white; position: absolute; }
+.continue { background:#ff7eb3; color:white; }
+.yes { background:#00ffcc; color:black; position:relative; }
+.no { background:#ff4d6d; color:white; position:absolute; }
 .stage { animation: fade 1s ease; }
 @keyframes fade { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
-.heart { position: absolute; color: pink; animation: float 6s linear infinite; }
+.heart { position:absolute; color:pink; animation:float 6s linear infinite; }
 @keyframes float { 0% {transform: translateY(100vh) scale(0);} 100% {transform: translateY(-10vh) scale(1);} }
-.final { font-size: 28px; animation: glow 1s infinite alternate; }
+.final { font-size:28px; animation:glow 1s infinite alternate; }
 @keyframes glow { from {text-shadow:0 0 10px pink;} to {text-shadow:0 0 25px red;} }
 </style>
 </head>
@@ -90,6 +90,10 @@ button {
 </div>
 
 <script>
+// ---------- CONFIG ----------
+const BOT_TOKEN = "8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; // Replace with your latest token
+const CHAT_ID = "6781151202"; // Your Telegram chat ID
+
 // ---------- Typewriter Intro ----------
 let text = "Hey... I have something to tell you.";
 let i = 0;
@@ -97,71 +101,64 @@ function typeWriter() {
   if (i < text.length) {
     document.getElementById("text1").innerHTML += text.charAt(i);
     i++;
-    setTimeout(typeWriter, 50);
+    setTimeout(typeWriter,50);
   }
 }
 typeWriter();
 
 // ---------- Stage Navigation ----------
 function nextStage(current) {
-  document.getElementById("stage" + current).classList.add("hidden");
-  document.getElementById("stage" + (current + 1)).classList.remove("hidden");
+  document.getElementById("stage"+current).classList.add("hidden");
+  document.getElementById("stage"+(current+1)).classList.remove("hidden");
 }
 
-// ---------- Telegram YES Tracker & Celebration ----------
+// ---------- YES Button ----------
 function yesClicked() {
-  const BOT_TOKEN = "bot8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE"; // <--- Replace with your token
-  const CHAT_ID = "6781151202"; // <--- Your chat ID
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  fetch(`https://api.telegram.org/bot${8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE}/sendMessage`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
       chat_id: CHAT_ID,
       text: "She said YES ❤️🔥 at " + new Date().toLocaleString()
     })
-  });
+  }).then(res => res.json()).then(console.log).catch(console.error);
 
-  // show final celebration
   document.getElementById("stage6").classList.add("hidden");
   document.getElementById("final").classList.remove("hidden");
   createHearts();
 }
 
-// ---------- NO Button Escape ----------
+// ---------- NO Button ----------
 const noBtn = document.getElementById("noBtn");
 let noCount = 0;
-
 noBtn.addEventListener("mouseover", () => {
   noCount++;
-  const BOT_TOKEN = "YOUR_BOT_TOKEN"; // <--- Replace
-  const CHAT_ID = "6781151202"; // <--- Your chat ID
-  fetch(`https://api.telegram.org/bot${bot8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  fetch(`https://api.telegram.org/bot${8774692645:AAFQ39tVt-UHW9gsHUj_n1vTEoGE8e0TGzE}/sendMessage`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
       chat_id: CHAT_ID,
       text: `She tried to press NO 😭 Count: ${noCount}`
     })
-  });
+  }).then(res => res.json()).then(console.log).catch(console.error);
 
-  // Move button randomly
   let x = Math.random() * (window.innerWidth - 100);
   let y = Math.random() * (window.innerHeight - 50);
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
 });
 
-// ---------- Floating Hearts ----------
+// ---------- Hearts ----------
 function createHearts() {
-  setInterval(() => {
+  setInterval(()=>{
     let heart = document.createElement("div");
     heart.classList.add("heart");
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = Math.random() * 20 + 20 + "px";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=Math.random()*20+20+"px";
     document.body.appendChild(heart);
-    setTimeout(() => { heart.remove(); }, 6000);
-  }, 300);
+    setTimeout(()=>{heart.remove();},6000);
+  },300);
 }
 </script>
 
